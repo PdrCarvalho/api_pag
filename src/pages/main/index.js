@@ -1,30 +1,52 @@
-import React,{Component} from "react";
+import React, { Component } from "react";
 import api from '../../service/api'
-
- export default class Main extends Component{
+import './styles.css'
+export default class Main extends Component {
     state = {
-        products : [],
+        products: [],
+        productInfo: {},
+        page: 1,
     }
-    componentDidMount(){
+    componentDidMount() {
         this.loadItems();
 
     }
-    loadItems = async ()=>{
-        const response = await api.get('/products');
-        console.log(response.data.docs);
-        this.setState({products : response.data.docs});
-        console.log(this.state.products)
+    loadItems = async (page = 1) => {
+        console.log(page)
+        const response = await api.get(`/products?page=${page}`);
+        //console.log(response.data.docs);
+        const { docs, ...productInfo } = response.data;
+        //console.log(productInfo);
+        this.setState({ products: docs, productInfo, page });
     };
-    render(){
-        const {products}= this.state;
+    prevPag = () => {
+        const { page} = this.state;
+        if (page === 1) return;
+        const pagNumber = page -1;
+        this.loadItems(pagNumber);
+    }
+    nextPag = () => {
+        const { page, productInfo } = this.state;
+        if (page === productInfo.pages) return;
+        const pagNumber = page + 1;
+        this.loadItems(pagNumber);
+    }
+    render() {
+        const { products,page,productInfo } = this.state;
         return (
             <div className="product-list">
-            {products.map(product =>(
-                <article key= {product._id}>
-                <strong>{product.title}</strong>
-                <p>{product.description}</p>
-                </article>
-            ))}
+                {products.map(product => (
+                    <article key={product._id}>
+                        <strong>{product.title}</strong>
+                        <p>{product.description}</p>
+                        <a href="">Acessar</a>
+                    </article>
+                ))}
+                
+                <div className="actions">
+                <button disabled={page === 1} onClick={this.prevPag}>Back</button>
+                <button disabled={page === productInfo.pages } onClick={this.nextPag}>Next</button>
+                </div>
             </div>
         );
     }
