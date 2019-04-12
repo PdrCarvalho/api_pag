@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import api from '../../service/api'
 import './styles.css'
 import {Link}  from 'react-router-dom';
+
 export default class Main extends Component {
     state = {
         products: [],
@@ -49,6 +50,7 @@ export default class Main extends Component {
                 <button disabled={page === productInfo.pages } onClick={this.nextPag}>Next</button>
                 </div>
             </div>
+           
         );
     }
 }
